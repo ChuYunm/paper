@@ -13,6 +13,8 @@ from dataset import create_dataset
 from model import MODEL_NAMES, create_model
 from helper import setup_default_logging
 
+import time
+
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training',
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('data', type=str, metavar='DIR',
@@ -36,9 +38,11 @@ parser.add_argument('--model', type=str, metavar='PATH',
 
 args = parser.parse_args()
 
-face_color_labels = ['赤', '黄', '白', '黑', '正常']
-face_expression_labels = ['有神', '无神']
-face_emotion_labels = ['喜','悲','平静']
+Face_expression = ['NO','Yes']
+Face_color = ['cyan','red','yellow','white','black','normal']
+Face_emotion = ['happy','sad','paceful']
+
+np.seterr(divide='ignore',invalid='ignore')
 
 
 def visualization(input_tensor, output_tensor, i, nrows, ncols, mean=None, std=None, cuda=True):
@@ -64,8 +68,8 @@ def visualization(input_tensor, output_tensor, i, nrows, ncols, mean=None, std=N
         img = np.clip(img, 0, 1)
 
         color_outputs = outputs[j][:6]
-        expression_outputs = outputs[j][6:8]
-        emotion_outputs = outputs[j][8:16]
+        expression_outputs = outputs[j][6:9]
+        emotion_outputs = outputs[j][9:11]
 
         color_score = np.exp(emotion_outputs) / np.sum(np.exp(emotion_outputs))
         expression_score = np.exp(expression_outputs) / np.sum(np.exp(expression_outputs))
@@ -81,7 +85,7 @@ def visualization(input_tensor, output_tensor, i, nrows, ncols, mean=None, std=N
             face_emotion_labels[color_pred.item()], face_expression_labels[expression_pred.item()], face_color_labels[emotion_pred.item()])
         plt.title(title)
         plt.axis('off')
-
+    plt.savefig(f'./test/predict.jpg')
 
 def inference():
     setup_default_logging()
@@ -166,4 +170,8 @@ def inference():
 
 
 if __name__ == '__main__':
+        start_time = time.time()  # 记录开始时间
     inference()
+    end_time = time.time()  # 记录结束时间
+    execution_time = end_time - start_time  # 计算代码执行时间
+    print(f"代码执行时间：{execution_time} 秒")
