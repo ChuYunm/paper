@@ -61,6 +61,6 @@ def accuracy(output, target, topk=(1,)):
 
 def calculate_metrics(pred, target, threshold=0.5):
     pred = np.array(pred > threshold, dtype=np.float32)
-    return (metrics.precision_score(y_true=target, y_pred=pred, average='weighted'),
-            metrics.recall_score(y_true=target, y_pred=pred, average='weighted'))
+    return (metrics.precision_score(y_true=target, y_pred=pred, average='macro'),
+            metrics.recall_score(y_true=target, y_pred=pred, average='macro'))
 
